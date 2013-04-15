@@ -7,20 +7,24 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/user"
 	"path"
 	"strings"
 )
 
 func boomkat(name string, no_cog bool, no_delete bool) {
-	log.Println(no_cog)
-	log.Println(no_delete)
+	usr, err := user.Current()
+  if err != nil {
+	  log.Fatal(err)
+  }
 
 	dirname := path.Base(name)
 	dirname = strings.Replace(dirname, "flac_", "", 1)
 	dirname = strings.Replace(dirname, "mp3_", "", 1)
 	dirname = strings.Replace(dirname, "_", " ", -1)
 	dirname = dirname[:len(dirname)-4]
-	path := "~/Music/" + dirname
+	dirname = strings.TrimRight(dirname, " ")
+	path := usr.HomeDir + "/Music/" + dirname
 
 	os.Mkdir(path, 0755)
 
@@ -65,7 +69,6 @@ func boomkat(name string, no_cog bool, no_delete bool) {
 			log.Fatal(err)
 		}
 		err = cmd.Wait()
-		log.Println(err)
 	}
 }
 
